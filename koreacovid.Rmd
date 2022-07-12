@@ -17,7 +17,7 @@ kRdata <- read.csv(file = 'kRdata.csv')
 ```
 
 ```{r eval=FALSE}
-FinalData <- FinalData %>%
+kRdata <- kRdata %>%
 mutate(across(where(is.character), as.factor))
 ```
 
@@ -31,7 +31,9 @@ state of a patient must be died or alive - we adjust that as well
   
 # Question 1 - Is dying independent of sex
 
+$H_0$ There is no correlation between dying and sex.  
 
+$H_A$ There is a correlation between dying and sex.  
 
 
 Table of patients:
@@ -54,12 +56,12 @@ dd2 <- kRdata %>% group_by(result,sex) %>% summarize(count=n()) %>% mutate(prcnt
 
 # the group_by followed by summarize(count=n())
 
-basicC <- ggplot(dd2,aes(x=class,y=count,fill=Sex))
+basicC <- ggplot(dd2,aes(x=result,y=count,fill=sex))
 basicC + geom_bar(stat="identity",position="dodge")
 
 #Now for percentage plot
 
-basicCC <- ggplot(dd2,aes(x=class,y=prcnt*100,fill=Sex)) 
+basicCC <- ggplot(dd2,aes(x=result,y=prcnt*100,fill=sex)) 
 basicCC + geom_bar(stat="identity", position = "dodge")
 
 ```
@@ -69,9 +71,19 @@ basicCC + geom_bar(stat="identity", position = "dodge")
 ## Numerical results
 
 
+```{r}
+table1 <- xtabs(~result + sex, data=kRdata)
+rowPerc(table1)
+colPerc(table1)
+```
+
 ## Inferential results 
 
-
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
 
 
 ## Conclusions
